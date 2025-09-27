@@ -2,6 +2,7 @@ Indian Auto Price Predictor
 A full-stack machine learning application to accurately predict the resale value of used cars in the Indian market.
 
 Live Application Demo
+![Indian Auto Price Predictor Demo](demo.gif)
 Project Overview
 This project is an end-to-end implementation of a machine learning pipeline for predicting used car prices. It starts with raw data, proceeds through data cleaning and feature engineering, trains a predictive model, and culminates in a user-friendly web application where users can get real-time price estimates. The model is specifically tailored to the nuances of the Indian automobile market.
 
