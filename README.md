@@ -40,6 +40,7 @@ Installation and Usage
 To run this project on your local machine, please follow these steps:
 
 1. Clone the Repository
+(Assuming your GitHub repository name is Indian-Auto-Price-Predictor)
 
 git clone [https://github.com/YOUR_USERNAME/Indian-Auto-Price-Predictor.git](https://github.com/YOUR_USERNAME/Indian-Auto-Price-Predictor.git)
 cd Indian-Auto-Price-Predictor
