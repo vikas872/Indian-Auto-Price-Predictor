@@ -1,0 +1,15 @@
+Ignore the Python virtual environment folder
+/venv
+
+Ignore Python cache files
+pycache/
+*.pyc
+*.pyo
+*.pyd
+
+Ignore IDE/Editor specific files
+.vscode/
+.idea/
+
+Ignore sensitive files (if any)
+*.env
