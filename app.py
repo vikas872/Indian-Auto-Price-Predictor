@@ -2,18 +2,13 @@ import pandas as pd
 import joblib
 from flask import Flask, render_template, request
 
-# Initialize the Flask application
 app = Flask(__name__)
 
-# --- Load the Trained Model and Data Columns ---
-# Load the pre-trained Random Forest model for the Indian market
 model = joblib.load('random_forest_model_indian.pkl')
 
-# Load the column names that the model was trained on
 data_columns = joblib.load('model_columns_indian.pkl')
 
 
-# --- Define the Routes ---
 
 @app.route('/')
 def home():
@@ -27,13 +22,10 @@ def predict():
     # Get all the input values from the form as a dictionary
     input_features = request.form.to_dict()
 
-    # --- Prepare the input data for the model ---
     # Create a dataframe with a single row of zeros, using the loaded column names
     prediction_df = pd.DataFrame(columns=data_columns)
     prediction_df.loc[0] = 0
 
-    # The model expects 'Present_Price' in Lakhs, but the user inputs it in Rupees.
-    # We convert the input from Rupees to Lakhs.
     present_price_rupees = float(input_features.get('Present_Price', 0))
     prediction_df['Present_Price'] = present_price_rupees / 100000.0
 
@@ -54,7 +46,6 @@ def predict():
     prediction_df = prediction_df[data_columns]
                 
     # --- Make the Prediction ---
-    # The model will predict the price in Lakhs.
     prediction_in_lakhs = model.predict(prediction_df)
     
     # Convert the prediction from Lakhs to Rupees for display
@@ -63,10 +54,7 @@ def predict():
     # Format the output with the Rupee symbol and commas
     output = f"₹{prediction_in_rupees:,.2f}"
 
-    # ** THIS IS THE UPDATED LINE **
-    # Render the home page again, passing back the prediction and the original form data
     return render_template('index.html', prediction_text=f'Predicted Car Price: {output}', form_data=input_features)
 
-# This line is essential to run the Flask app
 if __name__ == "__main__":
-    app.run(debug=True)
+    pass
