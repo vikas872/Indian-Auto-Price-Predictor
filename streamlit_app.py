@@ -6,7 +6,6 @@ import time
 # Set page configuration
 st.set_page_config(
     page_title="Indian Car Price Predictor",
-    page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded"
 )
