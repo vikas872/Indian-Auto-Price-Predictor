@@ -61,19 +61,19 @@ if model and data_columns:
     # Header Section
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.title("🚗 Indian Used Car Price Predictor")
+        st.title("Indian Used Car Price Predictor")
         st.markdown("### Accurate Resale Value Estimation AI")
         st.markdown("Unlock the hidden value of your vehicle with our advanced Machine Learning model. Perfect for buyers and sellers looking for a fair deal.")
     
     with col2:
         # Placeholder for an image or logo if available, otherwise just spacing
         st.write("") 
-        st.info("💡 **Pro Tip:** Lower kms and fewer owners significantly boost resale value.")
+        st.info("Lower kms and fewer owners significantly boost resale value.")
 
     st.markdown("---")
 
     # --- 3. Sidebar for Inputs ---
-    st.sidebar.header("📝 Enter Car Details")
+    st.sidebar.header("Enter Car Details")
     
     with st.sidebar.form("prediction_form"):
         st.subheader("Vehicle Specs")
@@ -103,7 +103,7 @@ if model and data_columns:
         seller_type = st.selectbox("Seller Type", ["Dealer", "Individual"])
         transmission = st.selectbox("Transmission", ["Manual", "Automatic"])
         
-        submit_btn = st.form_submit_button("🚀 Predict Price")
+        submit_btn = st.form_submit_button("Predict Price")
 
     # --- 4. Main Content Area (Results & Insights) ---
     
@@ -172,8 +172,7 @@ if model and data_columns:
 
 
     # --- 5. Footer/About ---
-    st.markdown("---")
-    st.markdown("Built with ❤️ using Streamlit & Scikit-Learn")
+
 
 else:
     st.warning("Application is waiting for model files to be loaded.")
