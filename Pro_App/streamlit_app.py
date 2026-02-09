@@ -27,9 +27,32 @@ st.markdown("""
 <style>
     .stTabs [data-baseweb="tab-list"] { gap: 10px; }
     .stTabs [data-baseweb="tab"] { padding-top: 10px; padding-bottom: 10px; border-radius: 4px; font-weight: 500; }
-    .main-header { font-size: 2.5rem; font-weight: 700; color: #1E293B; margin-bottom: 1rem; }
+    .main-header { font-size: 2.5rem; font-weight: 700; color: #1E293B; margin-bottom: 0.5rem; }
     .sub-header { font-size: 1.2rem; color: #64748B; margin-bottom: 2rem; }
-    .card { background-color: #ffffff; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #E2E8F0; }
+    .card { background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-left: 5px solid #10B981; }
+    .ticker-wrap {
+        width: 100%;
+        overflow: hidden;
+        background-color: #1E293B;
+        color: white;
+        padding: 10px 0;
+        margin-bottom: 20px;
+        border-radius: 5px;
+    }
+    .ticker {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker 30s linear infinite;
+    }
+    .ticker-item {
+        display: inline-block;
+        padding: 0 2rem;
+        font-size: 0.9rem;
+    }
+    @keyframes ticker {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -42,7 +65,24 @@ if not model:
     st.stop()
 
 # --- Tabs ---
-tab1, tab2, tab3 = st.tabs(["📊 Prediction Tool", "📈 Model Insights", "🧠 Interview Prep"])
+# Ticker logic
+quotes = [
+    "💡 Tip: Cars with full service history command 15% higher resale value.",
+    "🚗 Market Trend: SUV demand is up 12% this quarter.",
+    "📉 Depreciation Alert: Values drop fastest in the first 3 years.",
+    "💰 Seller Tip: Detailing your car can add ₹10k-20k to the final deal.",
+    "⭐ Pro Insight: First owners always get the best deals!"
+]
+quote_html = f"""
+<div class="ticker-wrap">
+<div class="ticker">
+{''.join([f'<div class="ticker-item">{q}</div>' for q in quotes])}
+</div>
+</div>
+"""
+st.markdown(quote_html, unsafe_allow_html=True)
+
+tab1, tab2 = st.tabs(["📊 Valuation & Forecast", "📈 Market Insights"])
 
 # ==========================
 # TAB 1: PREDICTION TOOL
@@ -84,12 +124,42 @@ with tab1:
             pred_rupees = pred_lakhs * 100000
             
             st.markdown("### Valuation Result")
-            st.markdown(f"""<div class="card"><span style="font-size: 0.9rem; color: #64748B;">ESTIMATED MARKET PRICE</span><div style="font-size: 3rem; font-weight: 800; color: #10B981; margin: 0.5rem 0;">₹{pred_rupees:,.0f}</div><div style="font-size: 0.9rem; color: #64748B;">Range: ₹{(pred_rupees*0.95):,.0f} - ₹{(pred_rupees*1.05):,.0f}</div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="card">
+                <span style="font-size: 0.9rem; color: #64748B; text-transform: uppercase;">Estimated Market Value</span>
+                <div style="font-size: 2.5rem; font-weight: 800; color: #10B981; margin: 0.5rem 0;">₹{pred_rupees:,.0f}</div>
+                <div style="font-size: 0.9rem; color: #64748B;">
+                    Ideal Selling Range: <b>₹{(pred_rupees*0.97):,.0f} - ₹{(pred_rupees*1.03):,.0f}</b>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
-            st.markdown("#### Analysis")
-            depreciation = min(70, (car_age * 10))
-            st.progress(max(0, 100 - int(depreciation))/100, text=f"Retained Value: {100-int(depreciation)}%")
-            st.caption("Value retention based primarily on vehicle age.")
+            st.markdown("#### 📅 Future Value Forecast")
+            st.caption("Estimated depreciation over the next 3 years if kept in similar condition:")
+            
+            future_data = []
+            current_val = pred_lakhs
+            for i in range(1, 4):
+                # Simple decay model: 10% per year for display purposes
+                current_val = current_val * 0.90
+                future_data.append({
+                    "Year": f"+{i} Year",
+                    "Estimated Value": f"₹{current_val*100000:,.0f}",
+                    "Loss": f"-₹{(pred_lakhs - current_val)*100000:,.0f}"
+                })
+            st.table(pd.DataFrame(future_data))
+            
+            # CSV Download
+            report_text = f"""
+            VALUATION REPORT
+            ----------------
+            Date: {pd.Timestamp.now().strftime('%Y-%m-%d')}
+            Vehicle: {car_age}yo, {kms_driven}kms, {fuel_type}
+            
+            ESTIMATED VALUE: ₹{pred_rupees:,.0f}
+            """
+            st.download_button("Download Report", report_text, file_name="valuation_report.txt")
+
         else:
             st.info("Configure variables and click to calculate.")
 
@@ -114,16 +184,5 @@ with tab2:
     st.altair_chart(chart, use_container_width=True)
 
 # ==========================
-# TAB 3: INTERVIEW PREP
+# REMOVED TAB 3 (Interview Prep)
 # ==========================
-with tab3:
-    st.markdown("### System Architecture")
-    st.code("""[Raw CSV Data] -> [Preprocessing (One-Hot)] -> [Random Forest Model] -> [Streamlit App]""", language="text")
-    
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("#### Why Random Forest?")
-        st.info("Captures non-linear relationships (age vs price) better than Linear Regression and is robust to outliers.")
-    with c2:
-        st.markdown("#### Challenges?")
-        st.info("Handling categorical data (Fuel/Transmission) using One-Hot Encoding and deploying with correct Python versions.")
